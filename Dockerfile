@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev \ 
     build-essential \ 
  && rm -rf /var/lib/apt/lists/*
+ 
 RUN pip3 install --upgrade pip
 RUN locale-gen en_US.UTF-8
 RUN update-locale en_US.UTF-8
