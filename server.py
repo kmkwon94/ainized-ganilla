@@ -30,7 +30,7 @@ def fileupload():
             os.mkdir('/ganilla/upload/' + randomDirName)
             f.save('/ganilla/upload/' + randomDirName +'/' +
             secure_filename(f.filename))
-            return redirect(url_for('person_To_anime', input_dir = randomDirName))
+            return redirect(url_for('axelscheffler', input_dir = randomDirName))
         '''
         elif check_value == "m2f":
             os.mkdir('/home/user/upload/male2female/' + randomDirName)
