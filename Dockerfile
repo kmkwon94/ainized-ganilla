@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --upgrade pip
+RUN pip3 install flask
+RUN pip3 install flask_cors
+
 RUN locale-gen en_US.UTF-8
 RUN update-locale en_US.UTF-8
 #Set ascii environment
