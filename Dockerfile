@@ -1,27 +1,30 @@
-FROM nvidia/cuda:10.1-base-ubuntu16.04
+FROM nvidia/cuda:11.0-base-ubuntu20.04
 
 # Install some basic utilities
 RUN apt-get update && apt-get install -y \
+    libatlas-base-dev \
+    gfortran \
     curl \
-    ca-certificates \
     sudo \
     git \
     bzip2 \
     libx11-6 \
     tmux \
     htop \
-    nano \
     vim \
     wget \
     locales \
     libgl1-mesa-glx \
+    libssl-dev \ 
+    libpcre3 \
+    libpcre3-dev \ 
     python3 \
     python3-pip \ 
     python3-dev \ 
     build-essential \ 
  && rm -rf /var/lib/apt/lists/*
- 
-RUN pip3 install --upgrade pip
+
+RUN python3 -m pip install --upgrade pip
 RUN locale-gen en_US.UTF-8
 RUN update-locale en_US.UTF-8
 #Set ascii environment
