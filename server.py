@@ -27,8 +27,8 @@ def fileupload():
         # redirect할 것을 method명으로 처리함
         randomDirName = str(uuid.uuid4()) #사용자끼리의 업로드한 이미지가 겹치지 않게끔 uuid를 이용하여 사용자를 구분하는 디렉터리를 만든다.
         if check_value == "as":
-            os.mkdir('/ganilla/upload/' + randomDirName)
-            f.save('/ganilla/upload/' + randomDirName +'/' +
+            os.mkdir('./upload/' + randomDirName)
+            f.save('./upload/' + randomDirName +'/' +
             secure_filename(f.filename))
             return redirect(url_for('axelscheffler', input_dir = randomDirName))
         '''
