@@ -25,11 +25,12 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --upgrade pip
-
+COPY requirements.txt .
+RUN ["python3", "-m", "pip", "install", "-r", "requirements.txt"]
 RUN locale-gen en_US.UTF-8
 RUN update-locale en_US.UTF-8
 #Set ascii environment
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 COPY . /ganilla
 WORKDIR /ganilla
-RUN ["python3", "-m", "pip", "install", "-r", "requirements.txt"]
+

@@ -6,18 +6,57 @@ import os
 import random
 import string
 import uuid
+import os
+from options.test_options import TestOptions
+from options.test_options import BaseOptions
+from data import CreateDataLoader
+from models import create_model
+from util.visualizer import save_images
+from util import html
+from test import run
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
-path = "./static"
 
+########################################################################
+#preload Model
+def loadModel(name):
+    opt = TestOptions().parse()
+    # hard-code some parameters for test
+    opt.num_threads = 1   # test code only supports num_threads = 1
+    opt.batch_size = 1    # test code only supports batch_size = 1
+    opt.serial_batches = True  # no shuffle
+    opt.no_flip = True    # no flip
+    opt.display_id = -1   # no visdom display
+    opt.name = name
+    #preload model
+    model = create_model(opt)
+    model.setup(opt)
+    return [model, name]
+
+AS_model = loadModel('AS_pretrained')
+DM_model = loadModel('DM_pretrained')
+KH_model = loadModel('KH_pretrained')
+KP_model = loadModel('KP_pretrained')
+MB_model = loadModel('MB_pretrained')
+Miya_model = loadModel('Miyazaki_pretrained')
+PP_model = loadModel('PP_pretrained')
+RC_model = loadModel('RC_pretrained')
+SC_model = loadModel('SC_pretrained')
+SD_model =loadModel('SD_pretrained')
+TR_model = loadModel('TR_pretrained')
+########################################################################
 # 업로드 HTML 렌더링
 @app.route('/')
 def render_file():
     return render_template('upload.html')
 
-@app.route('/fileUpload', methods=['GET', 'POST'])
+@app.route('/healthz', methods=['GET'])
+def healthz():
+    return "I am alive", 200
+    
+@app.route('/fileUpload', methods=['POST'])
 def fileupload():
     check_value = request.form['check_model']
 
@@ -26,71 +65,70 @@ def fileupload():
         # 저장할 경로 + 파일명
         # redirect할 것을 method명으로 처리함
         randomDirName = str(uuid.uuid4()) #사용자끼리의 업로드한 이미지가 겹치지 않게끔 uuid를 이용하여 사용자를 구분하는 디렉터리를 만든다.
-        if check_value == "as":
-            os.mkdir('./upload/' + randomDirName)
-            f.save('./upload/' + randomDirName +'/' +
-            secure_filename(f.filename))
-            return redirect(url_for('axelscheffler', input_dir = randomDirName))
-        '''
-        elif check_value == "m2f":
-            os.mkdir('/home/user/upload/male2female/' + randomDirName)
-            f.save('/home/user/upload/male2female/' + randomDirName +'/' +
-            secure_filename(f.filename))
-            return redirect(url_for('male_To_female', input_dir = randomDirName))
-        else:
-            os.mkdir('/home/user/upload/no_glasses/' + randomDirName)
-            f.save('/home/user/upload/no_glasses/' + randomDirName +'/' +
-            secure_filename(f.filename))
-            return redirect(url_for('no_glasses', input_dir = randomDirName))
-        '''
+        path = "/ganilla/upload/" + randomDirName
+        target = {
+            "as" : {
+                "path" : path,
+                "function": axel_scheffler
+            }
+        }    
+        os.mkdir(target[check_value]["path"])
+        f.save(target[check_value]["path"] + '/' + secure_filename(f.filename))
+        return target[check_value]["function"](randomDirName)
 
 #사용자의 입력을 받아서 각 원하는 결과물을 라우팅
-@app.route('/axelscheffler', methods=['GET', 'POST'])
-def axel_scheffler():
-    input_dir = request.args.get('input_dir', '_unknown_')
-    cmd = "python3 test.py --dataroot upload/" + input_dir + "--name AS_pretrained --results_dir " + input_dir + " --model test"
-    os.system(cmd)
-    os.system("mv " + input_dir + "/AS_pretrained/test_100/index.html " + input_dir + "index.html")
-    os.system("mv " + input_dir +"index.html" + " templates")
-    return render_template(input_dir +"index.html")
-"""
-@app.route('/male2female', methods=['GET', 'POST'])
-def male_To_female():
-    input_dir = request.args.get('input_dir', '_unknown_')
-    modelType = "pretrain/m2f/256/male2female_council_folder.yaml"
-    #output = "static/male2female"
-    checkpoint = "pretrain/m2f/256/01000000"
-    input_ = "/home/user/upload/male2female/" + input_dir
-    a2b = 1
+def axel_scheffler(user_id):
+    data_root = 'upload/' + user_id
+    pretrain_model = 'AS_pretrained'
+    result_dir = './results/' + user_id
+    model = AS_model
+    #cmd = "python3 test.py --dataroot upload/" + user_id + "--name AS_pretrained --results_dir " + user_id + " --model test"
+    run(data_root, pretrain_model, result_dir, model)
+    return render_template(result_dir + "/" + "index.html")
 
-    file_list = runImageTransfer(modelType,checkpoint,input_,a2b)
-    file_list.sort()
-
-    new_file_list = []
-    print(file_list)
-    for i in file_list:
-        new_file_list.append(i.replace('static/',''))
-    print(new_file_list)
-    return render_template('showImage.html', image_names = new_file_list)
-   
-@app.route('/noglasses', methods=['GET', 'POST'])
-def no_glasses():
-    input_dir = request.args.get('input_dir', '_unknown_')
-    modelType = "pretrain/glasses_removal/128/glasses_council_folder.yaml"
-    #output = "static/no_glasses"
-    checkpoint = "pretrain/glasses_removal/128/01000000"
-    input_ = "/home/user/upload/no_glasses/" + input_dir
-    a2b = 1
-    file_list = runImageTransfer(modelType,checkpoint,input_,a2b)    
-    
-    #no_glasses_path = path + "/img/01000000_all_in_1"
-    #file_list = os.listdir(no_glasses_path)
-    file_list.sort()
-    new_file_list = []
-    for i in file_list:
-        new_file_list.append(i.replace('static/',''))
-    return render_template('showImage.html', image_names = new_file_list)
-"""
 if __name__ == '__main__':
-    # server execute
+    #preload를 하기 위해서 모델 10개를 --name을 이용하여 모두 preloadModel 을 만들어줘야한다.
+    """
+            "dm" : {
+                "path" : path,
+                "function":
+            },
+            "kh" : {
+                "path" : path,
+                "function":
+            },
+            "kp" : {
+                "path" : path,
+                "function":
+            },
+            "mb" : {
+                "path" : path,
+                "function":
+            },
+            "pp" : {
+                "path" : path,
+                "function":
+            },
+            "rc" : {
+                "path" : path,
+                "function":
+            },
+            "sc" : {
+                "path" : path,
+                "function":
+            },
+            "sd" : {
+                "path" : path,
+                "function":
+            },
+            "tr" : {
+                "path" : path,
+                "function":
+            },
+            "mi" : {
+                "path" : path,
+                "function" :
+            }
+            """
+    
     app.run(host='0.0.0.0', port=80, debug=True)

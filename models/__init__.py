@@ -6,6 +6,7 @@ def find_model_using_name(model_name):
     # Given the option --model [modelname],
     # the file "models/modelname_model.py"
     # will be imported.
+    model_name = 'test'
     model_filename = "models." + model_name + "_model"
     modellib = importlib.import_module(model_filename)
 
