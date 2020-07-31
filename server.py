@@ -14,6 +14,12 @@ from models import create_model
 from util.visualizer import save_images
 from util import html
 from test import run
+import numpy as np
+import shutil
+import PIL
+from PIL import Image, ImageOps
+import base64
+import io
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -21,6 +27,7 @@ CORS(app)
 
 ########################################################################
 #preload Model
+#preload를 하기 위해서 모델 10개를 --name을 이용하여 모두 preloadModel 을 만들어줘야한다. 
 def loadModel(name):
     opt = TestOptions().parse()
     # hard-code some parameters for test
@@ -39,12 +46,10 @@ AS_model = loadModel('AS_pretrained')
 DM_model = loadModel('DM_pretrained')
 KH_model = loadModel('KH_pretrained')
 KP_model = loadModel('KP_pretrained')
-MB_model = loadModel('MB_pretrained')
 Miya_model = loadModel('Miyazaki_pretrained')
 PP_model = loadModel('PP_pretrained')
 RC_model = loadModel('RC_pretrained')
 SC_model = loadModel('SC_pretrained')
-SD_model =loadModel('SD_pretrained')
 TR_model = loadModel('TR_pretrained')
 ########################################################################
 # 업로드 HTML 렌더링
@@ -55,7 +60,7 @@ def render_file():
 @app.route('/healthz', methods=['GET'])
 def healthz():
     return "I am alive", 200
-    
+
 @app.route('/fileUpload', methods=['POST'])
 def fileupload():
     check_value = request.form['check_model']
@@ -69,66 +74,151 @@ def fileupload():
         target = {
             "as" : {
                 "path" : path,
-                "function": axel_scheffler
+                "run" : runModel,
+                "args":{
+                    "pretrain_model" : "AS_pretrained",
+                    "model" : AS_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "dm" : {
+                "path" : path,
+                "run" : runModel,
+                "args" : {
+                    "pretrain_model" : "DM_pretrained",
+                    "model" : DM_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "kh" : {
+                "path" : path,
+                "run" : runModel,
+                "args" : {
+                    "pretrain_model" : "KH_pretrained",
+                    "model" : KH_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "kp" : {
+                "path" : path,
+                "run": runModel,
+                "args" : {
+                    "pretrain_model" : "KP_pretrained",
+                    "model" : KP_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "pp" : {
+                "path" : path,
+                "run" : runModel,
+                "args" :{
+                    "pretrain_model" : "PP_pretrained",
+                    "model" : PP_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "rc" : {
+                "path" : path,
+                "run" : runModel,
+                "args" : {
+                    "pretrain_model" : "RC_pretrained",
+                    "model" : RC_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "sc" : {
+                "path" : path,
+                "run" : runModel,
+                "args" : {
+                    "pretrain_model" : "SC_pretrained",
+                    "model" : SC_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "tr" : {
+                "path" : path,
+                "run" : runModel,
+                "args" : {
+                    "pretrain_model" : "TR_pretrained",
+                    "model" : TR_model,
+                    "user_id" : randomDirName
+                }
+            },
+            "mi" : {
+                "path" : path,
+                "run": runModel,
+                "args" : {
+                    "pretrain_model" : "Miyazaki_pretrained",
+                    "model" : Miya_model,
+                    "user_id" : randomDirName
+                }
             }
         }    
         os.mkdir(target[check_value]["path"])
         f.save(target[check_value]["path"] + '/' + secure_filename(f.filename))
-        return target[check_value]["function"](randomDirName)
+        arg = list(target[check_value]["args"].values())
+
+        return target[check_value]["run"](arg[0],arg[1],arg[2])
 
 #사용자의 입력을 받아서 각 원하는 결과물을 라우팅
-def axel_scheffler(user_id):
+def runModel(pretrain_model, model, user_id):
     data_root = 'upload/' + user_id
-    pretrain_model = 'AS_pretrained'
-    result_dir = './results/' + user_id
-    model = AS_model
-    #cmd = "python3 test.py --dataroot upload/" + user_id + "--name AS_pretrained --results_dir " + user_id + " --model test"
-    run(data_root, pretrain_model, result_dir, model)
-    return render_template(result_dir + "/" + "index.html")
+    result_dir = './static/img/' + user_id
+    img_list = run(data_root, pretrain_model, result_dir, model)
+    result_list = image_dump_to_memory(img_list, user_id)
+    remove(user_id)
+    return render_template('showImage.html', rawimg=result_list)
+
+def image_dump_to_memory(img_list, user_id):
+    path = '/ganilla/static/img/' + user_id + '/images/'
+    img_list[0] = path + img_list[0]
+    img_list[1] = path + img_list[1]
+    byte_image_list = [] #byte_image를 담기위한 list
+    tmp_list = [] #byte_image를 담기전에 decode 하기 위한 list
+    #imgFIle은 np.array형태여야 fromarray에 담길수 있음
+    #img_io는 각 파일마다 byte 객체를 적용해줘야하므로 for문 안에서 같이 반복을 돌아야 함
+    #b64encode로 encode 해준다.
+    for image in img_list:
+        imgFile = PIL.Image.fromarray(np.array(PIL.Image.open(image).convert("RGB")))
+        img_io = io.BytesIO()
+        imgFile.save(img_io, 'jpeg', quality = 100)
+        img_io.seek(0)
+        img = base64.b64encode(img_io.getvalue())
+        tmp_list.append(img)
+
+    #decode 작업은 여기서 해준다.
+    for i in tmp_list:
+        byte_image_list.append(i.decode('ascii'))
+
+    return byte_image_list
+
+def remove(user_key):
+    #input_dir = '/ganilla/upload/<user_id>
+    #output_dir = '/ganilla/static/img/<user_id>
+    remove_input_dir = '/ganilla/upload/' + user_key 
+    remove_output_dir = '/ganilla/static/img/' +user_key
+    print("Now start to remove file")
+    print("user key is " + user_key)
+    print("Input path " + remove_input_dir)
+    print("Output path " + remove_output_dir)
+
+    #output path를 삭제하는 try 문
+    try:
+        if os.path.isdir(remove_output_dir):
+            shutil.rmtree(remove_output_dir)
+            print("Delete " + remove_output_dir + " is completed")
+    except Exception as e:
+        print(e)
+        print("Delete" + remove_output_dir + " is failed")
+    #input path를 삭제하는 try 문
+    try:
+        if os.path.isdir(remove_input_dir):
+            shutil.rmtree(remove_input_dir)
+            print("Delete" + remove_input_dir + " is completed")
+    except Exception as e:
+        print("Delete" + remove_input_dir + " is failed")
+    
+    return print("All of delete process is completed!")
 
 if __name__ == '__main__':
-    #preload를 하기 위해서 모델 10개를 --name을 이용하여 모두 preloadModel 을 만들어줘야한다.
-    """
-            "dm" : {
-                "path" : path,
-                "function":
-            },
-            "kh" : {
-                "path" : path,
-                "function":
-            },
-            "kp" : {
-                "path" : path,
-                "function":
-            },
-            "mb" : {
-                "path" : path,
-                "function":
-            },
-            "pp" : {
-                "path" : path,
-                "function":
-            },
-            "rc" : {
-                "path" : path,
-                "function":
-            },
-            "sc" : {
-                "path" : path,
-                "function":
-            },
-            "sd" : {
-                "path" : path,
-                "function":
-            },
-            "tr" : {
-                "path" : path,
-                "function":
-            },
-            "mi" : {
-                "path" : path,
-                "function" :
-            }
-            """
-    
     app.run(host='0.0.0.0', port=80, debug=True)

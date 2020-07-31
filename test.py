@@ -17,7 +17,7 @@ def run(data_root, pretrain_model, result_dir, model):
     name = model[1]
     model = model[0]
     # create a website
-    web_dir = os.path.join(results_dir, name, '%s_%s' % (opt.phase, opt.epoch))
+    web_dir = os.path.join(results_dir)
     webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (name, opt.phase, opt.epoch))
     # test with eval mode. This only affects layers like batchnorm and dropout.
     # pix2pix: we use batchnorm and dropout in the original pix2pix. You can experiment it with and without eval() mode.
@@ -40,11 +40,12 @@ def run(data_root, pretrain_model, result_dir, model):
             index = int(os.path.basename(img_path[0]).split("_")[0]) - 1  # cityscapes
         if i % 5 == 0:
             print('processing (%04d)-th image... %s' % (i, img_path))
+            #img_path = 'upload/[user_id]/[upload_file]
         if not opt.cityscapes:
-            save_images(webpage, visuals, img_path, aspect_ratio=opt.aspect_ratio, width=opt.display_winsize, citysc=False)
+            image_list = save_images(webpage, visuals, img_path, aspect_ratio=opt.aspect_ratio, width=opt.display_winsize, citysc=False)
         else:
-            save_images(webpage, visuals, img_path, aspect_ratio=opt.aspect_ratio, width=opt.display_winsize,
+            image_list = save_images(webpage, visuals, img_path, aspect_ratio=opt.aspect_ratio, width=opt.display_winsize,
                         f_name=f_names[index], citysc=True)  # cityscapes
     # save the website
     webpage.save()
-    return "ok"
+    return image_list

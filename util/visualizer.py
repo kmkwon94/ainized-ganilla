@@ -25,7 +25,7 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256, f_nam
 
     webpage.add_header(name)
     ims, txts, links = [], [], []
-
+    
     for label, im_data in visuals.items():
         im = util.tensor2im(im_data)
         # if label == "real_A":
@@ -38,6 +38,7 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256, f_nam
             image_name = os.path.splitext(f_name)[0] + ".png" # cityscape icin eklendi
         else:
             image_name = '%s_%s.png' % (name, label)
+        print(image_name)
         save_path = os.path.join(image_dir, image_name)
         h, w, _ = im.shape
         if aspect_ratio > 1.0:
@@ -50,7 +51,7 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256, f_nam
         txts.append(label)
         links.append(image_name)
     webpage.add_images(ims, txts, links, width=width)
-
+    return ims
 
 class Visualizer():
     def __init__(self, opt):

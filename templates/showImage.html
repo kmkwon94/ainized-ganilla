@@ -3,11 +3,10 @@
   <head>
   </head>
   <body>
-    {{image_names}}
-    <hr>
-    {% for image_name in image_names %}
-    <img src="{{ url_for('static', filename=image_name)}}">
+    {% for img in rawimg %}
+    <div style="float: left; margin-right: 10px;">
+    <img src="data:image/jpg;base64,{{ img|safe }}" width="350px" height="350px">
+    </div>
     {% endfor %}
-  </div>
   </body>
 </html>
