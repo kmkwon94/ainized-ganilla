@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os 
@@ -20,11 +20,58 @@ import PIL
 from PIL import Image, ImageOps
 import base64
 import io
+import sys
+from threading import Thread
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
+threads = []
 
+#multi-threads with return value
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
+    def run(self):
+        print(type(self._target))
+        if self._target is not None:
+            self._return = self._target(*self._args,
+                                                **self._kwargs)
+    def join(self, timeout=3):
+        Thread.join(self, timeout=3)
+        return self._return
+
+class thread_with_trace(ThreadWithReturnValue):
+    def __init__(self, *args, **keywords):
+        ThreadWithReturnValue.__init__(self, *args, **keywords)
+        self.killed = False
+
+    def start(self):
+        self.__run_backup = self.run
+        self.run = self.__run
+        ThreadWithReturnValue.start(self)
+
+    def __run(self):
+        sys.settrace(self.globaltrace)
+        self.__run_backup()
+        self.run = self.__run_backup
+
+    def globaltrace(self, frame, event, arg):
+        if event == 'call':
+            return self.localtrace
+        else:
+            return None
+
+    def localtrace(self, frame, event, arg):
+        if self.killed:
+            if event == 'line':
+                raise SystemExit()
+        return self.localtrace
+
+    def kill(self):
+        self.killed = True
 ########################################################################
 #preload Model
 #preload를 하기 위해서 모델 10개를 --name을 이용하여 모두 preloadModel 을 만들어줘야한다. 
@@ -66,108 +113,135 @@ def fileupload():
     check_value = request.form['check_model']
 
     if request.method == 'POST':
-        f = request.files['file']
-        # 저장할 경로 + 파일명
-        # redirect할 것을 method명으로 처리함
-        randomDirName = str(uuid.uuid4()) #사용자끼리의 업로드한 이미지가 겹치지 않게끔 uuid를 이용하여 사용자를 구분하는 디렉터리를 만든다.
-        path = "/ganilla/upload/" + randomDirName
-        target = {
-            "as" : {
-                "path" : path,
-                "run" : runModel,
-                "args":{
-                    "pretrain_model" : "AS_pretrained",
-                    "model" : AS_model,
-                    "user_id" : randomDirName
+        global threads
+        print(len(threads),"fileUpload")
+        if len(threads) > 10:
+            return Response("error : Too many requests", status=429)
+        try:
+            f = request.files['file']
+            #사용자끼리의 업로드한 이미지가 겹치지 않게끔 uuid를 이용하여 사용자를 구분하는 디렉터리를 만든다.
+            randomDirName = str(uuid.uuid4()) 
+            path = "/ganilla/upload/" + randomDirName
+            target = {
+                "as" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args":{
+                        "pretrain_model" : "AS_pretrained",
+                        "model" : AS_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "dm" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args" : {
+                        "pretrain_model" : "DM_pretrained",
+                        "model" : DM_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "kh" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args" : {
+                        "pretrain_model" : "KH_pretrained",
+                        "model" : KH_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "kp" : {
+                    "path" : path,
+                    "run": runModel,
+                    "args" : {
+                        "pretrain_model" : "KP_pretrained",
+                        "model" : KP_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "pp" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args" :{
+                        "pretrain_model" : "PP_pretrained",
+                        "model" : PP_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "rc" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args" : {
+                        "pretrain_model" : "RC_pretrained",
+                        "model" : RC_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "sc" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args" : {
+                        "pretrain_model" : "SC_pretrained",
+                        "model" : SC_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "tr" : {
+                    "path" : path,
+                    "run" : runModel,
+                    "args" : {
+                        "pretrain_model" : "TR_pretrained",
+                        "model" : TR_model,
+                        "user_id" : randomDirName
+                    }
+                },
+                "mi" : {
+                    "path" : path,
+                    "run": runModel,
+                    "args" : {
+                        "pretrain_model" : "Miyazaki_pretrained",
+                        "model" : Miya_model,
+                        "user_id" : randomDirName
+                    }
                 }
-            },
-            "dm" : {
-                "path" : path,
-                "run" : runModel,
-                "args" : {
-                    "pretrain_model" : "DM_pretrained",
-                    "model" : DM_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "kh" : {
-                "path" : path,
-                "run" : runModel,
-                "args" : {
-                    "pretrain_model" : "KH_pretrained",
-                    "model" : KH_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "kp" : {
-                "path" : path,
-                "run": runModel,
-                "args" : {
-                    "pretrain_model" : "KP_pretrained",
-                    "model" : KP_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "pp" : {
-                "path" : path,
-                "run" : runModel,
-                "args" :{
-                    "pretrain_model" : "PP_pretrained",
-                    "model" : PP_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "rc" : {
-                "path" : path,
-                "run" : runModel,
-                "args" : {
-                    "pretrain_model" : "RC_pretrained",
-                    "model" : RC_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "sc" : {
-                "path" : path,
-                "run" : runModel,
-                "args" : {
-                    "pretrain_model" : "SC_pretrained",
-                    "model" : SC_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "tr" : {
-                "path" : path,
-                "run" : runModel,
-                "args" : {
-                    "pretrain_model" : "TR_pretrained",
-                    "model" : TR_model,
-                    "user_id" : randomDirName
-                }
-            },
-            "mi" : {
-                "path" : path,
-                "run": runModel,
-                "args" : {
-                    "pretrain_model" : "Miyazaki_pretrained",
-                    "model" : Miya_model,
-                    "user_id" : randomDirName
-                }
-            }
-        }    
-        os.mkdir(target[check_value]["path"])
-        f.save(target[check_value]["path"] + '/' + secure_filename(f.filename))
-        arg = list(target[check_value]["args"].values())
+            }    
+            os.mkdir(target[check_value]["path"])
+            f.save(target[check_value]["path"] + '/' + secure_filename(f.filename))
+            arg = list(target[check_value]["args"].values())
 
-        return target[check_value]["run"](arg[0],arg[1],arg[2])
-
+            return target[check_value]["run"](arg[0],arg[1],arg[2])
+        except Exception as e:
+            print(e)
+            return Response("error! you have to choose your illustrator please try again!", status=400)
 #사용자의 입력을 받아서 각 원하는 결과물을 라우팅
 def runModel(pretrain_model, model, user_id):
     data_root = 'upload/' + user_id
     result_dir = './static/img/' + user_id
-    img_list = run(data_root, pretrain_model, result_dir, model)
-    result_list = image_dump_to_memory(img_list, user_id)
-    remove(user_id)
-    return render_template('showImage.html', rawimg=result_list)
+    try:
+        #multi-threading
+        t1 = thread_with_trace(target=run, args=(data_root,pretrain_model,result_dir,model))
+        t1.user_id = user_id
+        threads.append(t1)
+        while threads[0].user_id!=user_id:
+            print(str(user_id)+": ", threads[0].user_id)
+            if threads[0].is_alive():
+                threads[0].join()
+        threads[0].start()
+
+        img_list = threads[0].join(timeout=3)
+        if threads[0].is_alive():
+            threads[0].kill()
+            threads.pop(0)
+            raise Exception("error model does not work! please try again 30 seconds later")
+        threads.pop(0)
+        
+        #img_list = run(data_root, pretrain_model, result_dir, model)
+        result_list = image_dump_to_memory(img_list, user_id)
+        remove(user_id)
+        return render_template('showImage.html', rawimg=result_list)
+    except Exception as e:
+        print(e)
+        return Response("error! please try again", status=400)
 
 def image_dump_to_memory(img_list, user_id):
     path = '/ganilla/static/img/' + user_id + '/images/'
@@ -178,19 +252,23 @@ def image_dump_to_memory(img_list, user_id):
     #imgFIle은 np.array형태여야 fromarray에 담길수 있음
     #img_io는 각 파일마다 byte 객체를 적용해줘야하므로 for문 안에서 같이 반복을 돌아야 함
     #b64encode로 encode 해준다.
-    for image in img_list:
-        imgFile = PIL.Image.fromarray(np.array(PIL.Image.open(image).convert("RGB")))
-        img_io = io.BytesIO()
-        imgFile.save(img_io, 'jpeg', quality = 100)
-        img_io.seek(0)
-        img = base64.b64encode(img_io.getvalue())
-        tmp_list.append(img)
+    try:
+        for image in img_list:
+            imgFile = PIL.Image.fromarray(np.array(PIL.Image.open(image).convert("RGB")))
+            img_io = io.BytesIO()
+            imgFile.save(img_io, 'jpeg', quality = 100)
+            img_io.seek(0)
+            img = base64.b64encode(img_io.getvalue())
+            tmp_list.append(img)
 
-    #decode 작업은 여기서 해준다.
-    for i in tmp_list:
-        byte_image_list.append(i.decode('ascii'))
+        #decode 작업은 여기서 해준다.
+        for i in tmp_list:
+            byte_image_list.append(i.decode('ascii'))
 
-    return byte_image_list
+        return byte_image_list
+    except Exception as e:
+        print(e)
+        return Response("Cannot load img_list please try again", status=400)
 
 def remove(user_key):
     #input_dir = '/ganilla/upload/<user_id>

@@ -15,7 +15,7 @@
   <body>
     <div class = "container">
       <div class="jumbotron mt-3">
-        <h1>Council-GAN</h1>
+        <h1>Ganilla</h1>
           <A>Original Git Hub repository : </A> <A href="https://github.com/giddyyupp/ganilla"> Ganilla</A>
           <br>
           <A>Ainize Git Hub repository : </A> <A href="https://github.com/kmkwon94/ganilla-gpu"> on Ainize </A>
@@ -48,24 +48,24 @@
               ><input type="radio" name="check_model" value="tr" />Tony Ross</label
             >
             <label
-            ><input type="radio" name="check_model" value="mi" />Miyazaki Hayao</label
+              ><input type="radio" name="check_model" value="mi" />Miyazaki Hayao</label
             >
-          <div id="sampleBox">
-            <h2>Example</h2>
-            <figure>
-              <img class="img" src="https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/sample_img/sample_img1.png" alt="examples">
-                  <figcaption>examples</figcaption>
-            </figure>
-            <figure>
-              <img class="img" src="https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/sample_img/sample_img2.png" alt="Miyazaki Hayao's anime style">
-                  <figcaption>Miyazaki Hayao's anime style </figcaption>
-            </figure>
-          </div>
           <h1>Upload </h1>
             <label for="source">Input image : </label>
             <input type="file" name="file" style="margin-right: 10px; margin-bottom: 10px;"/>
             <input type="submit" class="btn btn-primary btn-lg" style="margin-left: auto;" />
           </form>
+          <div id="sampleBox">
+            <h2>Example</h2>
+            <figure style="text-align: center;">
+              <img class="img" src="https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/sample_img/sample_img1.png" alt="examples">
+                  <figcaption style="text-align: center;">examples</figcaption>
+            </figure>
+            <figure>
+              <img class="img" src="https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/sample_img/sample_img2.png" alt="Miyazaki Hayao's anime style">
+                  <figcaption style="text-align: center;">Miyazaki Hayao's anime style </figcaption>
+            </figure>
+          </div>
           <div id ='resultBox' style="margin-left: auto; margin-right: auto;">
             <p id='errorbox'></p>
             <img id='resultImage' src="" alt="">
