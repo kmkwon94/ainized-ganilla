@@ -1,12 +1,23 @@
 <!doctype html>
 <html>
   <head>
+     <!-- Required meta tags -->
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ 
+     <!-- Bootstrap CSS -->
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+ 
+     <title>Ganilla output</title>    
   </head>
   <body>
-    {% for img in rawimg %}
-    <div style="float: left; margin-right: 10px;">
-    <img src="data:image/jpg;base64,{{ img|safe }}" width="350px" height="350px">
+    <div>
+      {% for img in rawimg %}
+      <div class ="jumbotron mt-3" style="float: left; margin-right: 10px;">
+        <img src="data:image/jpg;base64,{{ img|safe }}" width="350px" height="350px">
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </body>
 </html>
