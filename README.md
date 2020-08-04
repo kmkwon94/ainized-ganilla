@@ -14,6 +14,7 @@ Just click this button!
 
 [![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/kmkwon94/ganilla-gpu.git)
 
+![Ainize examples](docs/figs/ganilla-gpu-ainize-example.png)
 **Dataset Stats:**
 
 ![Ill stats](docs/figs/dataset_stats.png)
