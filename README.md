@@ -7,6 +7,12 @@ GANILLA: Generative Adversarial Networks for Image to Illustration Translation.
 [Paper](https://www.sciencedirect.com/science/article/pii/S0262885620300184)
 [Arxiv](https://arxiv.org/abs/2002.05638)
 
+## Ainize
+You can run ganilla-gpu simply on Ainize 
+
+Just click this button!
+
+[![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/kmkwon94/ganilla-gpu.git)
 
 **Dataset Stats:**
 
