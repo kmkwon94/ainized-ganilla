@@ -33,4 +33,5 @@ RUN update-locale en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 COPY . /ganilla
 WORKDIR /ganilla
-
+EXPOSE 80
+CMD python3 ./server.py
