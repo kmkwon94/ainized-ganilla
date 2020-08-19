@@ -115,7 +115,7 @@ def fileupload():
     if request.method == 'POST':
         global threads
         print(len(threads),"fileUpload")
-        if len(threads) > 10:
+        if len(threads) > 3:
             return Response("error : Too many requests", status=429)
         try:
             f = request.files['file']
