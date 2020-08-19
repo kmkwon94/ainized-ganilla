@@ -14,34 +14,34 @@ Just click this button!
 
 [![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ganilla-gpu-kmkwon94.endpoint.ainize.ai/)
 
-![Ainize examples](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla-gpu-ainize-example.png)
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla-gpu-ainize-example.png" width="100%" alt = "Ainize Demo"></img>
+
 **Dataset Stats:**
 
-![Ill stats](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/dataset_stats.png)
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/dataset_stats.png" width = "100%" alt = "Ill stats"></img>
 
 **Sample Images:**
 
-![Ill images](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ill_dataset.png)
-
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ill_dataset.png" width = "100%" alt = "Ill images"></img>
 
 **GANILLA**:
 
 
 **GANILLA results on the illustration dataset:**
 
-![GANILLA results](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla_res.png)
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla_res.png" width = "100%" alt = "GANILLA results"></img>
 
 **Comparison with other methods:**
 
-![comparison](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/sota_comp.png)
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/sota_comp.png" width = "100%" alt = "comparison"></img>
 
 **Style transfer using Miyazaki's anime images:**
 
-![GANILLA miyazaki](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/miyazaki_res.png)
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/miyazaki_res.png" width = "100%" alt = "GANILLA miyazaki"></img>
 
 **Ablation Experiments:**
 
-![GANILLA ablation](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ablation_experiments.png)
+<img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ablation_experiments.png" width = "100%" alt = "GANILLA ablation"></img>
 
 ## Prerequisites
 - Linux or macOS
