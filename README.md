@@ -14,14 +14,14 @@ Just click this button!
 
 [![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ganilla-gpu-kmkwon94.endpoint.ainize.ai/)
 
-![Ainize examples](/docs/figs/ganilla-gpu-ainize-example.png)
+![Ainize examples](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla-gpu-ainize-example.png)
 **Dataset Stats:**
 
-![Ill stats](/docs/figs/dataset_stats.png)
+![Ill stats](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/dataset_stats.png)
 
 **Sample Images:**
 
-![Ill images](/docs/figs/ill_dataset.png)
+![Ill images](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ill_dataset.png)
 
 
 **GANILLA**:
@@ -29,19 +29,19 @@ Just click this button!
 
 **GANILLA results on the illustration dataset:**
 
-![GANILLA results](/docs/figs/ganilla_res.png)
+![GANILLA results](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla_res.png)
 
 **Comparison with other methods:**
 
-![comparison](/docs/figs/sota_comp.png)
+![comparison](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/sota_comp.png)
 
 **Style transfer using Miyazaki's anime images:**
 
-![GANILLA miyazaki](/docs/figs/miyazaki_res.png)
+![GANILLA miyazaki](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/miyazaki_res.png)
 
 **Ablation Experiments:**
 
-![GANILLA ablation](/docs/figs/ablation_experiments.png)
+![GANILLA ablation](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ablation_experiments.png)
 
 ## Prerequisites
 - Linux or macOS
@@ -50,7 +50,7 @@ Just click this button!
 
 ## Getting Started
 ### Downloading Datasets
-Please refer to [datasets.md](/docs/datasets.md) for details.
+Please refer to [datasets.md](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/datasets.md) for details.
 
 ### Installation
 
@@ -114,10 +114,10 @@ python test.py --dataroot ./datasets/monet2photo/testB/ --name {your_trained_mod
 You might want to specify `--netG` to match the generator architecture of the trained model.
 
 
-## [Training/Test Tips](/docs/tips.md)
+## [Training/Test Tips](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/tips.md)
 Best practice for training and testing your models.
 
-## [Frequently Asked Questions](/docs/qa.md)
+## [Frequently Asked Questions](https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/qa.md)
 Before you post a new question, please first look at the above Q & A and existing GitHub issues.
 
 
