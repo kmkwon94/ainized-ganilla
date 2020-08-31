@@ -12,7 +12,7 @@ You can run ganilla-gpu simply on Ainize
 
 Just click this button!
 
-[![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ganilla-gpu-kmkwon94.endpoint.ainize.ai/)
+[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/kmkwon94/ganilla-gpu)
 
 <img src = "https://raw.githubusercontent.com/kmkwon94/ganilla-gpu/master/docs/figs/ganilla-gpu-ainize-example.png" width="100%" alt = "Ainize Demo"></img>
 
